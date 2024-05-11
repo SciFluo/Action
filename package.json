@@ -1,0 +1,34 @@
+{
+	"name": "@scifluo/action",
+	"type": "module",
+	"version": "1.0.0",
+	"description": "科荧——Action CI",
+	"license": "UNLICENSED",
+	"private": true,
+	"author": {
+		"name": "SharpIce",
+		"email": "VupRbl@163.com",
+		"url": "https://SharpIce.top"
+	},
+	"scripts": {
+		"pre": "prettier . --write"
+	},
+	"devDependencies": {
+		"prettier": "3.2.5"
+	},
+	"prettier": {
+		"semi": true,
+		"tabWidth": 4,
+		"useTabs": true,
+		"endOfLine": "lf",
+		"singleQuote": false,
+		"overrides": [
+			{
+				"files": "*.yml",
+				"options": {
+					"useTabs": false
+				}
+			}
+		]
+	}
+}
