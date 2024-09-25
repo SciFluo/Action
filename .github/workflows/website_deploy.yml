@@ -1,0 +1,45 @@
+name: Deploy
+
+on:
+    schedule:
+        - cron: '0 4 * * *'
+
+jobs:
+    Build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: 迁出 website 存储库
+              uses: actions/checkout@v3
+              with:
+                  repository: 'SciFluo/website'
+
+            - name: 迁出 content 存储库
+              uses: actions/checkout@v3
+              with:
+                  repository: 'SciFluo/content'
+                  path: 'submodule/content'
+
+            - name: 获取NodeJS
+              uses: actions/setup-node@v4
+              with:
+                  node-version: '20.17.0'
+                  cache: 'pnpm'
+
+            - name: 初始化
+              run: pnpm install
+
+            - name: 构建主题
+              run: pnpm --filter themes/SciFluo run build
+
+            - name: 构建站点
+              run: pnpm build
+
+            - name: 部署到 Netlify
+              uses: nwtgck/actions-netlify@v3.0
+              with:
+                  publish-dir: './build/dist'
+                  deploy-message: 'Deploy from GitHub Actions'
+              env:
+                  NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+                  NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+              timeout-minutes: 1
