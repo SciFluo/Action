@@ -1,6 +1,7 @@
 name: Website Deploy
 
 on:
+    workflow_dispatch:
     schedule:
         - cron: '0 4 * * *'
 
@@ -19,6 +20,11 @@ jobs:
                   repository: 'SciFluo/content'
                   path: 'submodule/content'
 
+            - name: 获取 pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 'latest'
+
             - name: 获取NodeJS
               uses: actions/setup-node@v4
               with:
@@ -28,8 +34,14 @@ jobs:
             - name: 初始化
               run: pnpm install
 
+            - name: 主题构建缓存
+              uses: actions/cache@v3
+              with:
+                  path: packages/hexo-theme-scifluo/node_modules/.cache
+                  key: ${{ runner.os }}-theme_build-${{ hashFiles('packages/hexo-theme-scifluo/webpack.config.js') }}
+
             - name: 构建主题
-              run: pnpm --filter themes/SciFluo run build
+              run: pnpm --filter hexo-theme-scifluo run build
 
             - name: 构建站点
               run: pnpm build
